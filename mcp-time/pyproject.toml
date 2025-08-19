@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "mcp-time"
+version = "0.1.0"
+description = "MCP server qui donne l'heure"
+authors = [{name="Toi"}]
+dependencies = ["mcp"]
+
+[project.scripts]
+mcp-time = "mcp_time.server:main"
