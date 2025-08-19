@@ -1,12 +1,16 @@
 [build-system]
 requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "mcp-time"
 version = "0.1.0"
-description = "MCP server qui donne l'heure"
-authors = [{name="Toi"}]
-dependencies = ["mcp"]
+description = "MCP server (STDIO) qui renvoie l'heure courante."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "mcp",          # SDK MCP Python
+]
 
 [project.scripts]
 mcp-time = "mcp_time.server:main"
