@@ -1,24 +1,19 @@
-from mcp.server import Server
-from mcp.transport.stdio import StdioServerTransport
+from mcp.server.fastmcp import FastMCP
 from zoneinfo import ZoneInfo
 import datetime
-import asyncio
 
-# Déclare le serveur MCP
-server = Server(name="mcp-time", version="0.1.0")
+# Crée un serveur MCP "haut niveau"
+mcp = FastMCP("mcp-time")
 
-# Outil: renvoie l'heure actuelle pour un fuseau donné
-@server.tool(
+@mcp.tool(
     name="now",
     description="Retourne l'heure actuelle en ISO et formatée pour un fuseau horaire donné."
 )
-async def now(locale: str = "fr-FR", timeZone: str = "Europe/Paris") -> dict:
+def now(locale: str = "fr-FR", timeZone: str = "Europe/Paris") -> dict:
     """
     Args:
-      locale: code de langue (non utilisé pour le formatage strftime, laissé pour compat)
+      locale: code de langue (pour compat, non utilisé par strftime)
       timeZone: identifiant IANA (ex: Europe/Paris, UTC, America/New_York)
-    Returns:
-      Dict JSON-sérialisable avec l'heure actuelle.
     """
     tz = ZoneInfo(timeZone)
     dt = datetime.datetime.now(tz)
@@ -26,13 +21,12 @@ async def now(locale: str = "fr-FR", timeZone: str = "Europe/Paris") -> dict:
         "iso": dt.isoformat(),
         "formatted": dt.strftime("%c"),
         "epochMs": int(dt.timestamp() * 1000),
-        "timeZone": str(dt.tzinfo)
+        "timeZone": str(dt.tzinfo),
     }
 
-# Boucle principale (transport STDIO pour Watson Orchestrate)
-async def main() -> None:
-    transport = StdioServerTransport()
-    await server.run(transport)
+def main() -> None:
+    # Lance le serveur en transport STDIO (parfait pour Watson Orchestrate)
+    mcp.run(transport="stdio")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
